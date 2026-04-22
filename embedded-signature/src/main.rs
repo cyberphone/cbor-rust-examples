@@ -58,7 +58,7 @@ fn main() {
                    SHARED_KEY,                       // the current object
                    &object.encode());                // encode(): all we got so far
     object[&CSF_CONTAINER_LBL].insert(CSF_SIG_LBL, 
-                            sig); // Add signature to CSF container
+                                      sig);          // Add signature to CSF container
     let cbor_object = object.encode();               // Return CBOR as bytes
     println!("Diagnostic: {object:?}\nHex: {}", hex::encode(cbor_object));
 }
