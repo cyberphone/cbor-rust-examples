@@ -47,7 +47,6 @@ fn main() {
     object.insert(APP_P1_LBL, "data");               // Application data
     object.insert(APP_P2_LBL, "more data");          //        ""
 
-
     ////////////////////////////////////////
     // Add a signature to the CBOR object //
     ////////////////////////////////////////
