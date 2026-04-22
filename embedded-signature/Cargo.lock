@@ -13,9 +13,9 @@ dependencies = [
 
 [[package]]
 name = "cbor-core"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a7beaab0c38ff7d15d9580ad6205f2b3170bdae1f048076619e2410149b395d"
+checksum = "7a8ffaad5e4e9914eda170f5bcad6e92dc178f313c56c2d8e399f5636515e797"
 
 [[package]]
 name = "cfg-if"

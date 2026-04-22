@@ -1,12 +1,14 @@
 // Embedded Signature example derived from:
 // https://www.ietf.org/archive/id/draft-rundgren-cbor-core-25.html#name-code-example
 use cbor_core::{Value, map};
-use sha2::{Sha256, Sha512, Digest};
+use sha2::{Sha256, Sha512};
 use hmac::{Hmac, KeyInit, Mac};
 use hex_literal;
 use hex;
 
-// static CSF_CONTAINER_LBL: Value = Value::SimpleValue(SimpleValue::from_u8(99).unwrap());
+///////////////////
+// CSF constants //
+///////////////////
 const CSF_ALG_LBL: Value = Value::Unsigned(1);
 const CSF_SIG_LBL: Value = Value::Unsigned(6);
 const CSF_CONTAINER_LBL: Value = Value::simple_value(99);
