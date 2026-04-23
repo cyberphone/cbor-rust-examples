@@ -68,7 +68,7 @@ fn main() {
     /////////////////////////////////////
     let mut decoded = Value::decode(&cbor).unwrap();  // Decode CBOR object
     let alg = decoded[CSF_CONTAINER_LBL]
-	.get(CSF_ALG_LBL).unwrap().to_i32().unwrap(); // Get COSE algorithm
+        .get(CSF_ALG_LBL).unwrap().to_i32().unwrap(); // Get COSE algorithm
 
     let sig_val = decoded[CSF_CONTAINER_LBL].remove(CSF_SIG_LBL)
         .unwrap().into_bytes().unwrap();              // Get and REMOVE signature value
