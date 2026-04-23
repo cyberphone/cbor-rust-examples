@@ -39,27 +39,46 @@ fn main() {
         &hex_literal::hex!("7fdd851a3b9d2dafc5f0d00030e22b9343900cd42ede4948568a4a2ee655291a");
     const COSE_ALG: i32 = 5;
 
-    const APP_P1_LBL: i32 = 1;                       // Application label
-    const APP_P2_LBL: i32 = 2;                       //        ""
+    const APP_P1_LBL: i32 = 1;                        // Application label
+    const APP_P2_LBL: i32 = 2;                        //        ""
 
     ////////////////////////////////////
     // Create an unsigned CBOR object //
     ////////////////////////////////////
     let mut object = map!{};
-    object.insert(APP_P1_LBL, "data");               // Application data
-    object.insert(APP_P2_LBL, "more data");          //        ""
+    object.insert(APP_P1_LBL, "data");                // Application data
+    object.insert(APP_P2_LBL, "more data");           //        ""
 
     ////////////////////////////////////////
     // Add a signature to the CBOR object //
     ////////////////////////////////////////
-    let mut csf = map!{};                            // Create CSF container and
-    csf.insert(CSF_ALG_LBL, COSE_ALG);               // add COSE algorithm to it
-    object.insert(CSF_CONTAINER_LBL, csf);           // Add CSF container to object
-    let sig = hmac(COSE_ALG,                         // Generate signature over
-                   SHARED_KEY,                       // the current object
-                   &object.encode());                // encode(): all we got so far
-    object[&CSF_CONTAINER_LBL].insert(CSF_SIG_LBL, 
-                                      sig);          // Add signature to CSF container
-    let cbor_object = object.encode();               // Return CBOR as bytes
-    println!("Diagnostic: {object:?}\nHex: {}", hex::encode(cbor_object));
+    let mut csf = map!{};                             // Create CSF container and
+    csf.insert(CSF_ALG_LBL, COSE_ALG);                // add COSE algorithm to it
+    object.insert(CSF_CONTAINER_LBL, csf);            // Add CSF container to object
+    let sig = hmac(COSE_ALG,                          // Generate signature over
+                   SHARED_KEY,                        // the current object
+                   &object.encode());                 // encode(): all we got so far
+    object[CSF_CONTAINER_LBL].insert(CSF_SIG_LBL, 
+                                     sig);            // Add signature to CSF container
+    let cbor = object.encode();                       // Return CBOR as bytes
+    println!("Diagnostic: {object:?}\nHex: {}", hex::encode(&cbor));
+
+    /////////////////////////////////////
+    // Validate the signed CBOR object //
+    /////////////////////////////////////
+    let mut decoded = Value::decode(&cbor).unwrap();  // Decode CBOR object
+    let alg = decoded[CSF_CONTAINER_LBL]
+	.get(CSF_ALG_LBL).unwrap().to_i32().unwrap(); // Get COSE algorithm
+
+    let sig_val = decoded[CSF_CONTAINER_LBL].remove(CSF_SIG_LBL)
+        .unwrap().into_bytes().unwrap();              // Get and REMOVE signature value
+   
+    let actual_sig = hmac(alg,                        // Calculate signature over
+                          SHARED_KEY,                 // the current object
+                          &decoded.encode());         // encode(): all but the signature
+    assert_eq!(sig_val, actual_sig, "Signature did not validate");
+
+    // Validated object, access the "payload":
+    let p1 = decoded.get(APP_P1_LBL).unwrap().to_string();
+    println!("{p1}");                                 // p1 should now contain "data"
 }
