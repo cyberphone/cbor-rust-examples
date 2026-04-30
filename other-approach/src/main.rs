@@ -12,6 +12,18 @@ struct ArrayContent {
     vector: Rc<RefCell<Vec<CBOR>>>
 }
 
+#[derive(Clone)]
+#[derive(Debug)]
+struct IntContent {
+    value: i64
+}
+
+impl CoreTrait for IntContent {
+    fn to_string(&self) -> String {
+        self.value.to_string()
+    }
+}
+
 impl CoreTrait for ArrayContent {
     fn to_string(&self) -> String {
         let mut string = String::new();
@@ -36,7 +48,7 @@ impl ArrayContent {}
 #[derive(Debug)]
 enum CBOR {
     Array(ArrayContent),
-    Int(i64),
+    Int(IntContent)
 }
 
 impl CBOR {
@@ -44,9 +56,13 @@ impl CBOR {
         CBOR::Array(ArrayContent {vector: Rc::new(RefCell::new(Vec::new()))})
     }
 
+    pub fn new_i64(value: i64) -> CBOR {
+        CBOR::Int(IntContent {value: value})
+    }
+
     pub fn get_i64(&self) -> i64 {
         match self {
-            CBOR::Int(value) => *value,
+            CBOR::Int(int_content) => int_content.value,
             _ => panic!("Not an integer: CBOR::{:?}", self)
         }
     }
@@ -81,36 +97,34 @@ impl CBOR {
     }
 
     pub fn to_string(&self) -> String {
-        match self {
-            CBOR::Array(_) => self.as_trait().to_string(),
-            CBOR::Int(value) => format!("{:?}", *value)
-        }
+        self.as_trait().to_string()
     }
 
     fn as_trait(&self) -> &dyn CoreTrait {
         match self {
             CBOR::Array(b) => b,
+            CBOR::Int(b) => b,
             _ => panic!("Not permitted for: {:?}", self)
         }
     }
 }
 
 fn update_array(array: &CBOR) {
-    array.add(CBOR::Int(9))
-         .add(CBOR::new_array().add(CBOR::Int(-177)));
+    array.add(CBOR::new_i64(9))
+         .add(CBOR::new_array().add(CBOR::new_i64(-177)));
 }
 
 fn main() {
     let root_array = CBOR::new_array();
     update_array(&root_array);
-    let an_integer = CBOR::Int(6);
+    let an_integer = CBOR::new_i64(6);
     let mut another_array: CBOR = CBOR::new_array();
-    another_array.add(CBOR::Int(567));
+    another_array.add(CBOR::new_i64(567));
     root_array.add_ref(&another_array);
-    another_array.add(CBOR::Int(888));
+    another_array.add(CBOR::new_i64(888));
     println!("integer = {}", an_integer.get_i64());
-    root_array.add(an_integer).add(CBOR::Int(7));
-    root_array.get(2).add(CBOR::Int(44));
+    root_array.add(an_integer).add(CBOR::new_i64(7));
+    root_array.get(2).add(CBOR::new_i64(44));
     println!("array structure: {}", root_array.to_string());
     println!("integer = {}", root_array.get(2).get(1).get_i64());
     root_array.get_i64();  // Panic!
