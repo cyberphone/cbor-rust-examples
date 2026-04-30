@@ -45,6 +45,14 @@ fn main() {
     ////////////////////////////////////
     // Create an unsigned CBOR object //
     ////////////////////////////////////
+    let n = Value::Negative(6);
+    let bytes = n.encode();
+    println!("{:?}", bytes);
+    let new_map = Value::Map(::std::collections::BTreeMap::new());
+    let nm1 = &new_map;
+    let v = nm1.set(5, 8);
+    new_map.set(6, 8);
+    println!("{:?}", v.get(5));
     let mut object = map!{};
     object.insert(APP_P1_LBL, "data");                // Application data
     object.insert(APP_P2_LBL, "more data");           //        ""

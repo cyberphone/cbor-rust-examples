@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-cbor-core = "0.7.1"
+cbor-core = { path="../../../github.repositories/CBOR.rs" }
 hex = "0.4.3"
 hex-literal = "1.1.0"
 hmac = "0.13.0"
