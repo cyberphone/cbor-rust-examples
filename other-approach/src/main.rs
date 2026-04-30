@@ -117,14 +117,15 @@ fn main() {
     let root_array = CBOR::new_array();
     update_array(&root_array);
     let an_integer = CBOR::new_i64(6);
-    let mut another_array: CBOR = CBOR::new_array();
+    let another_array: CBOR = CBOR::new_array();
     another_array.add(CBOR::new_i64(567));
     root_array.add_ref(&another_array);
     another_array.add(CBOR::new_i64(888));
     println!("integer = {}", an_integer.get_i64());
     root_array.add(an_integer).add(CBOR::new_i64(7));
     root_array.get(2).add(CBOR::new_i64(44));
-    println!("array structure: {}", root_array.to_string());
+    println!("root array: {}", root_array.to_string());
+    println!("another array: {}", another_array.to_string());
     println!("integer = {}", root_array.get(2).get(1).get_i64());
     root_array.get_i64();  // Panic!
 }
