@@ -102,9 +102,8 @@ impl CBOR {
 
     fn as_trait(&self) -> &dyn CoreTrait {
         match self {
-            CBOR::Array(b) => b,
-            CBOR::Int(b) => b,
-            _ => panic!("Not permitted for: {:?}", self)
+            CBOR::Array(core_trait) => core_trait,
+            CBOR::Int(core_trait) => core_trait
         }
     }
 }
