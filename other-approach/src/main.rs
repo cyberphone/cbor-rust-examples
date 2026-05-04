@@ -114,7 +114,7 @@ impl CBOR {
             CBOR::Array(array_content) => {
                 Rc::strong_count(&array_content.vector)
             },
-            _ => panic!("Not an array : CBOR::{:?}", self)
+            _ => panic!("Not an array : CBOR::{}", self.type_name())
         }
     }
 }
