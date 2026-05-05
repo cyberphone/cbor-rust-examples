@@ -99,10 +99,10 @@ impl CBOR {
     }
 
     pub fn to_string(&self) -> String {
-        self.as_trait().to_string()
+        self.as_core_trait().to_string()
     }
 
-    fn as_trait(&self) -> &dyn CoreTrait {
+    fn as_core_trait(&self) -> &dyn CoreTrait {
         match self {
             CBOR::Array(core_trait) => core_trait,
             CBOR::Int(core_trait) => core_trait
