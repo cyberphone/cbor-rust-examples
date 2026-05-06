@@ -70,11 +70,11 @@ impl CBOR {
                                   read_flag: Self::init_read_flag()})
     }
 
-    pub fn new_i64(value: i64) -> CBOR {
+    pub fn new_int64(value: i64) -> CBOR {
         CBOR::Int(IntContent {value: value, read_flag: Self::init_read_flag()})
     }
 
-    pub fn get_i64(&self) -> i64 {
+    pub fn get_int64(&self) -> i64 {
         self.mark_as_read(true);
         match self {
             CBOR::Int(int_content) => int_content.value,
@@ -191,31 +191,31 @@ impl CBOR {
 }
 
 fn update_array(array: &CBOR) {
-    array.add(CBOR::new_i64(9))
-         .add(CBOR::new_array().add(CBOR::new_i64(-177)));
+    array.add(CBOR::new_int64(9))
+         .add(CBOR::new_array().add(CBOR::new_int64(-177)));
 }
 
 fn main() {
     let root_array = CBOR::new_array();
     update_array(&root_array);
-    let an_integer = CBOR::new_i64(6);
+    let an_integer = CBOR::new_int64(6);
     let sub_array: CBOR = CBOR::new_array();
-    sub_array.add(CBOR::new_i64(567));
+    sub_array.add(CBOR::new_int64(567));
     root_array.add_ref(&sub_array);
-    sub_array.add(CBOR::new_i64(888));
+    sub_array.add(CBOR::new_int64(888));
     let clone_int = an_integer.clone();
     assert_eq!(an_integer.is_read(), false);
-    println!("integer = {}", an_integer.get_i64());
+    println!("integer = {}", an_integer.get_int64());
     assert_eq!(clone_int.is_read(), true);
-    root_array.add(an_integer).add(CBOR::new_i64(7));
-    root_array.get(2).add(CBOR::new_i64(44));
+    root_array.add(an_integer).add(CBOR::new_int64(7));
+    root_array.get(2).add(CBOR::new_int64(44));
     println!("root array: {}", root_array.to_string());
     println!("another array: {}", sub_array.to_string());
-    println!("integer = {}", root_array.get(2).get(1).get_i64());
+    println!("integer = {}", root_array.get(2).get(1).get_int64());
     assert_eq!(root_array.rc_count(), 1);
     assert_eq!(sub_array.rc_count(), 2);
     {
-        let y = sub_array.add(CBOR::new_i64(3));
+        let y = sub_array.add(CBOR::new_int64(3));
         assert_eq!(y.rc_count(), 3);
         assert_eq!(sub_array.rc_count(), 3);
     }
@@ -224,10 +224,10 @@ fn main() {
     assert_eq!(root_array.to_string(), root_array.clone().to_string());
     assert_eq!(root_array.rc_count(), 1);
 
-    let some_int = CBOR::new_i64(67);
+    let some_int = CBOR::new_int64(67);
     // Unread Int
     assert_eq!(some_int.check_for_unread(), false);
-    let _ = some_int.get_i64();
+    let _ = some_int.get_int64();
     assert_eq!(some_int.check_for_unread(), true);
 
     // Root [] no get*() nessessary
@@ -235,7 +235,7 @@ fn main() {
     assert_eq!(some_array.check_for_unread(), true);
 
     // Unread [99]
-    let updated_array = some_array.add(CBOR::new_i64(99));
+    let updated_array = some_array.add(CBOR::new_int64(99));
     assert_eq!(updated_array.check_for_unread(), false);
     assert_eq!(some_array.check_for_unread(), false);
     // Get only fetches
@@ -243,7 +243,7 @@ fn main() {
     assert_eq!(some_array.check_for_unread(), false);
     assert_eq!(fetched_array_element.check_for_unread(), false);
     // Actual read
-    let _ = fetched_array_element.get_i64();
+    let _ = fetched_array_element.get_int64();
     assert_eq!(some_array.check_for_unread(), true);
 
     // Must access all elements in an array, including empty arrays: [99,[]]
@@ -253,5 +253,5 @@ fn main() {
     let _ = updated_array.get(1);
     assert_eq!(some_array.check_for_unread(), true);
 
-    root_array.get_i64();  // Panic!
+    root_array.get_int64();  // Panic!
 }
